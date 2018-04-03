@@ -1,17 +1,17 @@
+import 'babel-polyfill';
 import api from './api/index.js';
 import bodyParser from 'body-parser';
+import moment from 'moment';
 import express from 'express';
+// import Promise from 'bluebird';
 import cors from 'cors';
 import initialize from './db';
-import morgan from 'morgan';
 import http from 'http';
-import config from './config.json';
+import config from 'config';
+import { log, delay } from './utils';
 
-let app = express();
-app.server = http.createServer(app);
 
-// logger.
-app.use(morgan('dev'));
+const app = express();
 
 // 3rd party middleware.
 app.use(cors({
@@ -23,15 +23,42 @@ app.use(bodyParser.json({
 }));
 
 // initialize.
-initialize( db => {
+// app.start = new Promise((resolve) => {
+initialize(db => {
+    let _port = process.env.PORT || config.get('port');
+    let _host = process.env.HOST || config.get('host');
+
+    log.info(`${db}`);
     // Api router.
     app.use('/api', api({ config, db }));
 
-    // Server start and listen.
-    app.server.listen(process.env.PORT || config.port, () => {
-        console.log(`Started on port ${app.server.address().port}`);
-    });
-})
+    const server = http.createServer(app);
 
+    server.on('listening', () => {
+        const address = server.address();
+        log.info(`Server listening ${address.address}:${address.port}`)
+    });
+
+    server.on('error', error => {
+        log.info(`Server occured an error :: ${error}`)
+    });
+
+    log.info(`its now ${moment().format('YYYY-MM-dd HH:mm:ss')}`);
+
+    delay(1000).then(() => {
+        // Server start and listen.
+        server.listen(_port, _host);
+
+        log.info(`its now ${moment().format('YYYY-MM-dd HH:mm:ss')}`);
+        // resolve('OK');
+    });
+
+});
+// });
+
+
+// app.start().catch((err) => {
+//     log.error(err);
+// });
 
 export default app;

@@ -1,8 +1,11 @@
 {
   "name": "nodeJS-ES6-notification-hook",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "",
   "main": "dist",
+  "engines": {
+    "node": ">=7.6.0"
+  },
   "scripts": {
     "dev": "nodemon -w src --exec \"babel-node src --presets es2015,stage-0\"",
     "lint": "eslint src",
@@ -28,10 +31,15 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "babel-polyfill": "^6.26.0",
+    "bluebird": "^3.5.1",
     "body-parser": "^1.18.2",
+    "config": "^1.30.0",
     "cors": "^2.8.4",
     "express": "^4.16.3",
-    "morgan": "^1.9.0"
+    "moment": "^2.22.0",
+    "morgan": "^1.9.0",
+    "tracer": "^0.8.12"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

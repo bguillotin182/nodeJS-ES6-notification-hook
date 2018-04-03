@@ -5,7 +5,7 @@ export default ({ config, db}) => {
     let api = Router();
 
     api.get('/', (req, res) => {
-        res.json({version});
+        res.json({ version });
     });
 
     return api;

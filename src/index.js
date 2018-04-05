@@ -1,5 +1,6 @@
 import 'babel-polyfill';
 import api from './api/index.js';
+import slack from './slack/index.js'
 import bodyParser from 'body-parser';
 import moment from 'moment';
 import express from 'express';
@@ -23,42 +24,45 @@ app.use(bodyParser.json({
 }));
 
 // initialize.
-// app.start = new Promise((resolve) => {
-initialize(db => {
-    let _port = process.env.PORT || config.get('port');
-    let _host = process.env.HOST || config.get('host');
+app.start = async () => {
+    initialize(db => {
+        let _port = process.env.PORT || config.get('port');
+        let _host = process.env.HOST || config.get('host');
 
-    log.info(`${db}`);
-    // Api router.
-    app.use('/api', api({ config, db }));
+        let _slackWebhookUri = config.get('slackwebhookUri');
+        let _slackToken = config.get('slackToken');
+        // Api router.
+        app.use('/api', api({ config, db }));
+        // Slack router.
+        app.use('/slack', slack({ webhookUri: _slackWebhookUri, token : _slackToken }))
 
-    const server = http.createServer(app);
+        const server = http.createServer(app);
 
-    server.on('listening', () => {
-        const address = server.address();
-        log.info(`Server listening ${address.address}:${address.port}`)
+        server.on('listening', () => {
+            const address = server.address();
+            log.info(`Server listening ${address.address}:${address.port}`)
+        });
+
+        server.on('error', error => {
+            log.info(`Server occured an error :: ${error}`)
+            process.exit(1);
+        });
+
+        //log.info(`its now ${moment().format('YYYY-MM-dd HH:mm:ss')}`);
+
+        delay(1000).then(() => {
+            // Server start and listen.
+            server.listen(_port, _host);
+
+            //log.info(`its now ${moment().format('YYYY-MM-dd HH:mm:ss')}`);
+        });
+
     });
+};
 
-    server.on('error', error => {
-        log.info(`Server occured an error :: ${error}`)
-    });
 
-    log.info(`its now ${moment().format('YYYY-MM-dd HH:mm:ss')}`);
-
-    delay(1000).then(() => {
-        // Server start and listen.
-        server.listen(_port, _host);
-
-        log.info(`its now ${moment().format('YYYY-MM-dd HH:mm:ss')}`);
-        // resolve('OK');
-    });
-
+app.start().catch((err) => {
+    log.error(err);
 });
-// });
-
-
-// app.start().catch((err) => {
-//     log.error(err);
-// });
 
 export default app;

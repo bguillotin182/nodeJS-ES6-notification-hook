@@ -3,5 +3,7 @@
     "host": "127.0.0.1",
     "port": 8080,
     "bodyLimit": "100kb",
-    "corsHeaders": ["Link"]
+    "corsHeaders": ["Link"],
+    "slackwebhookUri": "xxxSLACKWEBHOOKURIxxx",
+    "slackToken": "xxxSLACKTOKENxxx"
 }

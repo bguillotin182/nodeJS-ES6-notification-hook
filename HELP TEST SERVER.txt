@@ -1,0 +1,30 @@
+-- FIND SLACK USER --
+
+GET - http://127.0.0.1:3000/slack/users
+-> JSON
+{
+    "email":"benoit@lumapps.com"
+}
+
+-- GET USER LIST SLACK --
+GET - http://127.0.0.1:3000/slack/users
+
+
+-- WEBHOOK CHALLENGE --
+POST - http://127.0.0.1:3000/api/webhook
+-> JSON
+{
+    "challenge": "qsfqsdfqsdf",
+    "token": "xxxTOKENxxx"
+}
+
+-- POST WEBHOOK NOTIFICATION --
+POST - http://127.0.0.1:3000/api/webhook
+-> JSON
+{
+    "event_ts": "2018-02-12",
+    "recipient": {"apiProfile": {"name": {"givenName": "Benoit","fullName": "Benoit GUILLOTIN","familyName": "GUILLOTIN"}}},
+    "sender": {"apiProfile": {"name": {"givenName": "Billy","fullName": "Billy BOB","familyName": "BOB"}}},
+    "token": "xxxTOKENxxx",
+    "event": {"event_family": "notification", "event_type": "post_mention", "url":"http://google.com"}
+}

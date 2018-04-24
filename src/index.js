@@ -9,8 +9,8 @@ import cors from 'cors';
 import initialize from './db';
 import http from 'http';
 import config from 'config';
-import { log, delay } from './utils';
-
+import Util from './utils';
+import LRU from 'lru-cache';
 
 const app = express();
 
@@ -25,44 +25,37 @@ app.use(bodyParser.json({
 
 // initialize.
 app.start = async () => {
-    initialize(db => {
+    initialize(async db => {
+        Util.log.info(`Here is DB set result ::: ${db}`);
+
         let _port = process.env.PORT || config.get('port');
         let _host = process.env.HOST || config.get('host');
 
-        let _slackWebhookUri = config.get('slackwebhookUri');
-        let _slackToken = config.get('slackToken');
         // Api router.
-        app.use('/api', api({ config, db }));
+        app.use('/api', api());
         // Slack router.
-        app.use('/slack', slack({ webhookUri: _slackWebhookUri, token : _slackToken }))
+        app.use('/slack', slack())
 
         const server = http.createServer(app);
 
         server.on('listening', () => {
             const address = server.address();
-            log.info(`Server listening ${address.address}:${address.port}`)
+            Util.log.info(`Server listening ${address.address}:${address.port}`)
         });
 
         server.on('error', error => {
-            log.info(`Server occured an error :: ${error}`)
+            Util.log.info(`Server occured an error :: ${error}`)
             process.exit(1);
         });
 
-        //log.info(`its now ${moment().format('YYYY-MM-dd HH:mm:ss')}`);
-
-        delay(1000).then(() => {
-            // Server start and listen.
-            server.listen(_port, _host);
-
-            //log.info(`its now ${moment().format('YYYY-MM-dd HH:mm:ss')}`);
-        });
-
+        await Util.delay(100);
+        server.listen(_port, _host);
     });
 };
 
 
 app.start().catch((err) => {
-    log.error(err);
+    Util.log.error(err);
 });
 
 export default app;

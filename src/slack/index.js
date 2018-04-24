@@ -1,8 +1,6 @@
-//import slack from 'slack';
 import { Router } from 'express';
-import { log } from '../utils.js';
-import { getUsers, getUser } from './slack_utils.js';
-
+import Util from '../utils.js';
+import SlackUtil  from './slack_utils.js';
 
 var slackApi = () => {
     let api = Router();
@@ -12,18 +10,17 @@ var slackApi = () => {
     });
 
     api.get('/users', async (req, res) => {
-        let users;
         try {
-            if (!req.query.email) {
-                users = await getUsers();
-                res.status(200).json({ users: users });
+            if (!req.body.email) {
+                let users = await SlackUtil.getUserList();
+                res.status(200).json({ users });
             } else {
-                users = await getUser({email: req.query.email});
-                res.status(200).json({ user: users });
+                let user = await SlackUtil.getUserByMail({ email: req.body.email });
+                res.status(200).json({ user });
             }
         } catch (err) {
-            log.error(err);
-            res.status(500).send('Something went wrong when sending the request ... ');
+            Util.log.error(err);
+            res.status(500).send('Something went wrong when sending the request slackApi ... ');
         }
     });
 

@@ -1,9 +1,11 @@
 {
-    "baseUrl": "http://127.0.0.1:8080",
+    "baseUrl": "http://127.0.0.1:3000",
     "host": "127.0.0.1",
-    "port": 8080,
+    "port": 3000,
     "bodyLimit": "100kb",
     "corsHeaders": ["Link"],
-    "slackwebhookUri": "xxxSLACKWEBHOOKURIxxx",
-    "slackToken": "xxxSLACKTOKENxxx"
+    "lsToken": "xxxTOKENxxx",
+    "slackwebhookUri": "xxxWEBHOOKURIxxx",
+    "slackToken": "xxxSLACKTOKENxxx",
+    "mailExtension" : "gmail.com"
 }
